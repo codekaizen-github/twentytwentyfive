@@ -1,0 +1,61 @@
+services:
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    ports:
+      - 8082:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - wp-data:/var/www/html
+      - ${PWD}:/var/www/html/wp-content/themes/twentytwentyfive:cached
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: wordpress
+    volumes:
+      - db-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8083:80
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: wordpress
+    depends_on:
+      - db
+
+  dev:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      target: dev
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - wp-data:/var/www/html
+      - ${PWD}:/var/www/html/wp-content/themes/twentytwentyfive:cached
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    command: tail -f /dev/null
+
+volumes:
+  wp-data:
+  db-data:

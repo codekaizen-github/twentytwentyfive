@@ -1,0 +1,33 @@
+{
+	"name": "Twenty Twenty Five Theme WordPress Development Environment",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "dev",
+	"workspaceFolder": "/var/www/html",
+	"forwardPorts": [
+		8082
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bmewburn.vscode-intelephense-client",
+				"xdebug.php-debug",
+				"neilbrayfield.php-docblocker",
+				"johnbillion.vscode-wordpress-hooks"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash"
+			}
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"upgradePackages": true
+		}
+	},
+	"postAttachCommand": {
+		"gitSafeDirectory": "git config --global --add safe.directory /var/www/html/wp-content/themes/twentytwentyfive;",
+		"lsla": "ls -la /var/www/html/wp-content/themes/twentytwentyfive",
+		"installWP": "while ! wp db check --path=/var/www/html; do sleep 5; done; wp core is-installed --path=/var/www/html || wp core install --url=\"http://localhost:8082\" --title=\"WP GitHub Gist Block Test Site\" --admin_user=local --admin_password=local --admin_email=local@example.com --path=/var/www/html"
+	}
+}

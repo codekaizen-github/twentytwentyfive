@@ -1,0 +1,7 @@
+.editorconfig
+.git
+.gitignore
+node_modules
+vendor
+test.sh
+.jenkins
