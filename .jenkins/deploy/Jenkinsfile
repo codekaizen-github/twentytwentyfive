@@ -4,6 +4,7 @@ pipeline {
         GHCR_REGISTRY = 'ghcr.io' // GitHub Container Registry
         GHCR_USER = 'ASDFASDF' // This can technically be anything. The GitHub PAT is what actually authenticates to GHCR.
         GHCR_CREDENTIALS_ID = 'jenkins-github-ghcr-pat-token-andrewjdawes' // Jenkins Credentials ID for a GitHub PAT Token with read/write access to GHCR packages
+        PACKAGE_TYPE = 'theme' // This is a theme, not a plugin.
     }
     stages {
         stage('Define vars') {
@@ -42,6 +43,7 @@ pipeline {
                         docker run --rm \
                             --pull always \
                             -v "$(pwd)/${PACKAGE_SLUG}.zip":/${PACKAGE_SLUG}.zip \
+                            -e PACKAGE_TYPE="${PACKAGE_TYPE}" \
                             -e PACKAGE_ZIP_PATH="/${PACKAGE_SLUG}.zip" \
                             -e REGISTRY_USERNAME="${GHCR_USER}" \
                             -e REGISTRY_PASSWORD="${GHCR_PAT}" \
