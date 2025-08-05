@@ -14,6 +14,11 @@ class Autoupdater
      */
     public $update_path;
     /**
+     * Whether to delete transients for testing
+     * @var bool
+     */
+    public $delete_transients = false;
+    /**
      * Package Slug (plugin_directory/package_file.php or theme_directory)
      * @var string
      */
@@ -34,10 +39,12 @@ class Autoupdater
      */
     function __construct($package_file)
     {
+        if ($this->delete_transients) {
+            $this->delete_update_transients();
+        }
         $this->package_file = $package_file;
         // Determine package type
         $this->package_type = $this->get_package_type();
-
         // Set the class public variables based on package type
         if ($this->package_type === 'plugin') {
             $this->package_slug = plugin_basename($package_file);
@@ -96,21 +103,38 @@ class Autoupdater
             require_once ABSPATH . 'wp-includes/theme.php';
         }
         $theme_data = wp_get_theme($this->slug);
-        // Convert WP_Theme object to array for consistency
-        return array(
-            'Name' => $theme_data->get('Name'),
-            'ThemeURI' => $theme_data->get('ThemeURI'),
-            'Description' => $theme_data->get('Description'),
-            'Author' => $theme_data->get('Author'),
-            'AuthorURI' => $theme_data->get('AuthorURI'),
-            'Version' => $theme_data->get('Version'),
-            'Template' => $theme_data->get('Template'),
-            'Status' => $theme_data->get('Status'),
-            'Tags' => $theme_data->get('Tags'),
-            'TextDomain' => $theme_data->get('TextDomain'),
-            'DomainPath' => $theme_data->get('DomainPath'),
-            'UpdateURI' => $theme_data->get('UpdateURI')
+
+        // Define all possible theme headers
+        $headers = array(
+            'Name' => 'Theme Name',
+            'ThemeURI' => 'Theme URI',
+            'Author' => 'Author',
+            'AuthorURI' => 'Author URI',
+            'Description' => 'Description',
+            'Version' => 'Version',
+            'RequiresWP' => 'Requires at least',
+            'TestedWP' => 'Tested up to',
+            'RequiresPHP' => 'Requires PHP',
+            'License' => 'License',
+            'LicenseURI' => 'License URI',
+            'TextDomain' => 'Text Domain',
+            'Tags' => 'Tags',
+            'DomainPath' => 'Domain Path',
+            'UpdateURI' => 'Update URI',
+            'Template' => 'Template',
+            'Status' => 'Status'
         );
+
+        // Convert WP_Theme object to array for consistency
+        $result = array();
+        foreach ($headers as $key => $header) {
+            $value = $theme_data->get($key);
+            if ($value) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -128,6 +152,17 @@ class Autoupdater
     }
 
     /**
+     * Delete update transients for testing purposes
+     */
+    public function delete_update_transients()
+    {
+        // Delete plugin-related transients
+        delete_site_transient('update_plugins');
+        delete_site_transient('update_themes');
+        delete_site_transient('update_core');
+    }
+
+    /**
      * Add our self-hosted autoupdate package to the filter transient
      *
      * @param $transient
@@ -135,6 +170,7 @@ class Autoupdater
      */
     public function check_update($transient)
     {
+
         if (empty($transient->checked)) {
             return $transient;
         }
@@ -156,8 +192,21 @@ class Autoupdater
             $meta_object->new_version = $meta_object->version;
             $meta_object->url = $meta_object->update_uri;
             $meta_object->package = trailingslashit($meta_object->update_uri) . 'download';
-            // Add the package to the response
-            $transient->response[$this->package_slug] = $meta_object;
+
+            // Format response appropriately for plugins vs themes
+            if ($this->package_type === 'theme') {
+                // Themes require a specific format
+                $theme_response = array(
+                    'theme' => $this->slug,
+                    'new_version' => $meta_object->version,
+                    'url' => $meta_object->url,
+                    'package' => $meta_object->package,
+                );
+                $transient->response[$this->package_slug] = $theme_response;
+            } else {
+                // Plugins can use the object as is
+                $transient->response[$this->package_slug] = $meta_object;
+            }
         }
         error_log('Transient: ' . print_r($transient, true));
         return $transient;

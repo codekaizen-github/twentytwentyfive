@@ -9,6 +9,11 @@
  * @since Twenty Twenty-Five 1.0
  */
 
+add_action('init', function () {
+	require_once('autoupdater.php');
+	new Autoupdater(__FILE__);
+});
+
 // Adds theme support for post formats.
 if ( ! function_exists( 'twentytwentyfive_post_format_setup' ) ) :
 	/**
