@@ -3,31 +3,9 @@ pipeline {
     environment {
         GHCR_REGISTRY = 'ghcr.io' // GitHub Container Registry
         GHCR_USER = 'ASDFASDF' // This can technically be anything. The GitHub PAT is what actually authenticates to GHCR.
-        // GHCR_REPOSITORY = 'your-github-username/your-image-name' # Actually, get this dynamically from Jenkins env vars
         GHCR_CREDENTIALS_ID = 'jenkins-github-ghcr-pat-token-andrewjdawes' // Jenkins Credentials ID for a GitHub PAT Token with read/write access to GHCR packages
     }
     stages {
-        // Check out this way to detect if you are building a tag or not: https://www.youtube.com/watch?v=saiCjlJpfdA
-        stage('Exit early') {
-            agent any
-            when {
-                not {
-                    anyOf {
-                        buildingTag();
-                        branch 'main';
-                    }
-                }
-            }
-            steps {
-                script {
-                    echo "Not building. Exiting pipeline with 'NOT_BUILT' status."
-                    currentBuild.result = 'NOT_BUILT'
-                    error("No changes detected; exiting pipeline.")
-                    exit 1
-                    return
-                }
-            }
-        }
         stage('Define vars') {
             agent any
             steps {
@@ -41,8 +19,8 @@ pipeline {
                     } else {
                         error "Failed to extract owner and repo from GIT_URL"
                     }
-                    // When building the main branch, use the 'latest' tag
-                    env.DYNAMIC_TAG_NAME = env.GIT_BRANCH == 'main' ? 'latest' : env.TAG_NAME
+                    // When building the main branch, use the 'latest' tag. Replace any "/" with "-" to ensure valid Docker tag.
+                    env.DYNAMIC_TAG_NAME = (env.GIT_BRANCH == 'main' ? 'latest' : env.GIT_BRANCH).replaceAll('/', '-')
                     env.GHCR_REPOSITORY = "${env.GITHUB_REPOSITORY_OWNER}/${env.GITHUB_REPOSITORY_NAME}".toLowerCase()
                     env.PACKAGE_SLUG = "${env.GITHUB_REPOSITORY_NAME}" // Use the repository name as the plugin slug
                     env.LABEL_ORG_OPENCONTAINERS_IMAGE_SOURCE = "https://github.com/${env.GITHUB_REPOSITORY_OWNER}/${env.GITHUB_REPOSITORY_NAME}"
