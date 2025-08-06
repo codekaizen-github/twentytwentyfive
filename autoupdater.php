@@ -84,7 +84,7 @@ class Autoupdater
      * Get plugin data from file headers
      * @return array Plugin data
      */
-    function getPluginData()
+    function get_plugin_data()
     {
         if (! function_exists('get_plugin_data')) {
             require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -97,7 +97,7 @@ class Autoupdater
      * Get theme data from file headers
      * @return array Theme data
      */
-    function getThemeData()
+    function get_theme_data()
     {
         if (! function_exists('wp_get_theme')) {
             require_once ABSPATH . 'wp-includes/theme.php';
@@ -141,12 +141,12 @@ class Autoupdater
      * Get package data based on whether it's a plugin or theme
      * @return array Package data
      */
-    function getPackageData()
+    function get_package_data()
     {
         if ($this->package_type === 'plugin') {
-            return $this->getPluginData();
+            return $this->get_plugin_data();
         } elseif ($this->package_type === 'theme') {
-            return $this->getThemeData();
+            return $this->get_theme_data();
         }
         return array();
     }
@@ -182,7 +182,7 @@ class Autoupdater
         if (!isset($meta_object->version)) {
             return $transient;
         }
-        $package_data = $this->getPackageData();
+        $package_data = $this->get_package_data();
         if (!is_array($package_data) || empty($package_data)) {
             return $transient;
         }
@@ -238,7 +238,7 @@ class Autoupdater
         if ($cached !== null) {
             return $cached;
         }
-        $package_data = $this->getPackageData();
+        $package_data = $this->get_package_data();
         if (!is_array($package_data) || empty($package_data) || empty($package_data['UpdateURI'])) {
             return false;
         }
