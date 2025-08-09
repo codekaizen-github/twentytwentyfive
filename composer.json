@@ -25,6 +25,41 @@
 	},
 	"scripts": {
 		"format": "phpcbf --standard=phpcs.xml.dist --report-summary --report-source",
-		"lint": "phpcs --standard=phpcs.xml.dist"
+		"lint": "phpcs --standard=phpcs.xml.dist",
+		"post-install-cmd": [
+			"@strauss-prefix-namespaces"
+		],
+		"post-update-cmd": [
+			"@strauss-prefix-namespaces"
+		],
+		"post-autoload-dump": [
+			"@strauss-include-autoloader"
+		],
+		"strauss-install": [
+			"test -f strauss.phar || curl -o strauss.phar -L -C - https://github.com/BrianHenryIE/strauss/releases/latest/download/strauss.phar"
+		],
+		"strauss": [
+			"@php strauss.phar"
+		],
+		"strauss-prefix-namespaces": [
+			"@strauss-install",
+			"@strauss",
+			"@composer dump-autoload"
+		],
+		"strauss-include-autoloader": [
+			"@strauss-install",
+			"@strauss include-autoloader"
+		]
+	},
+	"require": {
+		"codekaizen/wp-package-autoupdater": "^1.0"
+	},
+	"extra": {
+		"strauss": {
+			"target_directory": "vendor",
+			"namespace_prefix": "WordPress\\TwentyTwentyFive\\Dependencies\\",
+			"classmap_prefix": "WordPress_TwentyTwentyFive_Dependencies_",
+			"constant_prefix": "WP2025Dependencies_"
+		}
 	}
 }

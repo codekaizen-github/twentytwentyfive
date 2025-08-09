@@ -10,8 +10,7 @@
  */
 
 add_action('init', function () {
-	require_once('autoupdater.php');
-	new Autoupdater(__FILE__);
+	new \WordPress\TwentyTwentyFive\Dependencies\CodeKaizen\WPPackageAutoupdater\ORASHub\V1(__FILE__);
 });
 
 // Adds theme support for post formats.
