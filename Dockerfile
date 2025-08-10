@@ -21,7 +21,7 @@ FROM dependencies AS build
 COPY . /${PACKAGE_SLUG}
 WORKDIR /${PACKAGE_SLUG}
 # Run this command but with fnm loaded into context
-# RUN bash -c "source \"$HOME/.bashrc\" && fnm use $NODE_VERSION && composer install --no-dev --no-interaction --optimize-autoloader"
+RUN bash -c "composer install --no-dev --no-interaction --optimize-autoloader"
 
 FROM alpine:latest AS compress
 ARG PACKAGE_SLUG
