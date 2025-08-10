@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8a4078f341d3965b0e3aa0b1e6714b75",
+    "content-hash": "4fa80afe96ffd389a297f7bc91bf537d",
     "packages": [
         {
             "name": "codekaizen/wp-package-autoupdater",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/codekaizen-github/wp-package-autoupdater.git",
-                "reference": "220b576ae19e6cbc18f855a80a382558aeed1a9a"
+                "reference": "1b2eb2b3b518c9692ca0d6619af80a9cd8d54158"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codekaizen-github/wp-package-autoupdater/zipball/220b576ae19e6cbc18f855a80a382558aeed1a9a",
-                "reference": "220b576ae19e6cbc18f855a80a382558aeed1a9a",
+                "url": "https://api.github.com/repos/codekaizen-github/wp-package-autoupdater/zipball/1b2eb2b3b518c9692ca0d6619af80a9cd8d54158",
+                "reference": "1b2eb2b3b518c9692ca0d6619af80a9cd8d54158",
                 "shasum": ""
             },
             "require": {
@@ -41,9 +41,9 @@
             ],
             "support": {
                 "issues": "https://github.com/codekaizen-github/wp-package-autoupdater/issues",
-                "source": "https://github.com/codekaizen-github/wp-package-autoupdater/tree/v1.0.2"
+                "source": "https://github.com/codekaizen-github/wp-package-autoupdater/tree/v1.0.3"
             },
-            "time": "2025-08-09T16:07:55+00:00"
+            "time": "2025-08-10T18:49:43+00:00"
         }
     ],
     "packages-dev": [
